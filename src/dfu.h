@@ -16,15 +16,21 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef WEBUSB_H_INCLUDED
-#define WEBUSB_H_INCLUDED
+#ifndef DFU_H_INCLUDED
+#define DFU_H_INCLUDED
 
-#include "webusb_defs.h"
+#include <libopencm3/usb/usbd.h>
+#include <libopencm3/usb/dfu.h>
 
-// Arbitrary
-#define WEBUSB_VENDOR_CODE 0xCB
+extern const struct usb_dfu_descriptor dfu_function;
 
-extern const struct webusb_platform_descriptor webusb_platform;
-extern void webusb_setup(usbd_device* usbd_dev);
+typedef void (*GenericCallback)(void);
+typedef void (*StateChangeCallback)(enum dfu_state);
+typedef void (*StatusChangeCallback)(enum dfu_status);
+
+extern void dfu_setup(usbd_device* usbd_dev,
+                      GenericCallback on_detach_request,
+                      StateChangeCallback on_state_change,
+                      StatusChangeCallback on_status_change);
 
 #endif

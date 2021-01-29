@@ -61,9 +61,9 @@ struct TextFile {
 #define STR0(x) #x
 #define STR(x) STR0(x)
 const char infoUf2File[] = //
-    "UF2 Bootloader " UF2_VERSION "\r\n"
+    "Matrix Bootloader " UF2_VERSION "\r\n"
     "Model: " PRODUCT_NAME "\r\n"
-    "Board-ID: " BOARD_ID "\r\n";
+    "Revision: " BOARD_ID "\r\n";
 
 const char indexFile[] = //
     "<!doctype html>\n"
@@ -76,8 +76,8 @@ const char indexFile[] = //
     "</html>\n";
 
 static const struct TextFile info[] = {
-    {.name = "INFO_UF2TXT", .content = infoUf2File},
-    {.name = "INDEX   HTM", .content = indexFile},
+    {.name = "SYSINFO TXT", .content = infoUf2File},
+    {.name = "UPDATEOSHTM", .content = indexFile},
     {.name = "CURRENT UF2"},
 };
 #define NUM_INFO (int)(sizeof(info) / sizeof(info[0]))

@@ -29,6 +29,10 @@
 #include "config.h"
 #include "backup.h"
 
+#ifndef STM32F1
+    #define STM32F1
+#endif
+
 #ifndef USES_GPIOA
 #if (HAVE_USB_PULLUP_CONTROL == 0)
 #define USES_GPIOA 1
@@ -189,21 +193,28 @@ void target_manifest_app(void) {
     scb_reset_system();
 }
 
-bool target_get_force_app(void) {
-    if (backup_read(BKP0) == CMD_APP) {
-        backup_write(BKP0, 0);
-        return true;        
-    }
-    return false;
-}
+// bool target_get_force_app(void) {
+//     if (backup_read(BKP0) == CMD_APP) {
+//         backup_write(BKP0, 0);
+//         return true;        
+//     }
+//     return false;
+// }
 
 bool target_get_force_bootloader(void) {
-    /* Enable GPIO clocks */
-    rcc_periph_clock_enable(RCC_GPIOA);
-    rcc_periph_clock_enable(RCC_GPIOB);
-    rcc_periph_clock_enable(RCC_GPIOC);
+#if HAVE_BUTTON
+    /* Check if the user button is held down */
+#if BUTTON_ACTIVE_HIGH
+        if (gpio_get(BUTTON_GPIO_PORT, BUTTON_GPIO_PIN)) {
+            return true;
+        }
+#else
+        if (!gpio_get(BUTTON_GPIO_PORT, BUTTON_GPIO_PIN)) {
+            return true;
+        }
+#endif
+#endif
 
-    bool force = true;
     /* Check the RTC backup register */
     uint32_t cmd = backup_read(BKP0);
     if (cmd == CMD_BOOT) {
@@ -211,40 +222,15 @@ bool target_get_force_bootloader(void) {
         backup_write(BKP0, 0);
         return true;
     }
-    if (cmd == CMD_APP) {        
-        // we were told to reset into app
-        backup_write(BKP0, 0);
-        return false;
-    }
+    // if (cmd == CMD_APP) {        
+    //     // we were told to reset into app
+    //     backup_write(BKP0, 0);
+    //     return false;
+    // }
+    
+    backup_write(BKP0, 0);  
 
-#ifdef DOUBLE_TAP
-    target_set_led(1);
-    // wait for second press on reset
-    backup_write(BKP0, CMD_BOOT);
-    for (int i = 0; i < 3500000; ++i)
-        asm("nop");
-    backup_write(BKP0, 0);
-    target_set_led(0);
-    force = false;
-#else
-    // a reset now should go into app
-    backup_write(BKP0, CMD_APP);
-#endif
-
-#if HAVE_BUTTON
-    /* Check if the user button is held down */
-    if (BUTTON_ACTIVE_HIGH) {
-        if (gpio_get(BUTTON_GPIO_PORT, BUTTON_GPIO_PIN)) {
-            force = true;
-        }
-    } else {
-        if (!gpio_get(BUTTON_GPIO_PORT, BUTTON_GPIO_PIN)) {
-            force = true;
-        }
-    }
-#endif
-
-    return force;
+    return false;
 }
 
 void target_get_serial_number(char* dest, size_t max_chars) {

@@ -18,3 +18,4 @@ build
 
 # ignore local makefile settings
 src/local.mk
+libopencm3.zip

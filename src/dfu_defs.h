@@ -16,15 +16,20 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef WEBUSB_H_INCLUDED
-#define WEBUSB_H_INCLUDED
+#ifndef DFU_DEFS_H_INCLUDED
+#define DFU_DEFS_H_INCLUDED
 
-#include "webusb_defs.h"
+#include <libopencm3/usb/dfu.h>
 
-// Arbitrary
-#define WEBUSB_VENDOR_CODE 0xCB
+struct dfu_getstatus_response {
+    uint8_t bStatus;
+    uint8_t bwPollTimeout[3];
+    uint8_t bState;
+    uint8_t iString;
+} __attribute__((packed));
 
-extern const struct webusb_platform_descriptor webusb_platform;
-extern void webusb_setup(usbd_device* usbd_dev);
+struct dfu_getstate_response {
+    uint8_t bState;
+} __attribute__((packed));
 
 #endif

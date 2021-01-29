@@ -20,7 +20,9 @@
 #include <stdint.h>
 #include <string.h>
 
+#include <libopencm3/usb/dfu.h>
 #include "target.h"
+#include "dfu.h"
 #include "webusb.h"
 
 #include <libopencm3/usb/msc.h>
@@ -56,6 +58,9 @@ static const struct usb_interface_descriptor dfu_iface = {
     .iInterface = 4,
 
     .endpoint = NULL,
+
+    // .extra = &dfu_function,
+    // .extralen = sizeof(dfu_function),
 };
 
 static const struct usb_endpoint_descriptor msc_endp[] = {{
@@ -129,10 +134,10 @@ static const struct usb_bos_descriptor bos = {
 static char serial_number[USB_SERIAL_NUM_LENGTH+1];
 
 static const char *usb_strings[] = {
-    "Devanarchy",
-    "DAPBoot DFU Bootloader",
+    "203 Electronics",
+    "Matrix Bootloader",
     serial_number,
-    "DAPBoot DFU"
+    "Matrix DFU"
 };
 
 /* Buffer to be used for control requests. */
