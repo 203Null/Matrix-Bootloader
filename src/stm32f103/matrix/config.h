@@ -53,7 +53,7 @@
 #undef BOARD_ID
 #define BOARD_ID "REV 1.0"
 #undef INDEX_URL 
-#define INDEX_URL "mxfw.203.io"
+#define INDEX_URL "https://mxfw.203.io"
 
 #define USES_GPIOA 1
 
